@@ -3,32 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>talk to nepali</title>
+    <title>talk to SajiloSathi</title>
 </head>
 <body>
 
   <div id="header">
-    <h1>Nepali</h1>
+     <h6> <nav>
+      <ul>
+        <li><a href="index.html" target="_self">Chatbot</a></li>
+
+          <li><a href="about.html">About</a></li>
+          <li><a href="download.htm">Download</a></li>
+          <li><a href="index.html">Refresh,</a></li>
+          <li><a href="posts.html">posts</a></li>
+
+
+      </ul>
+  </nav></h6>
         </div>
     <div id="chat-container">
     
         <div id="chat-messages"></div>
         <input type="text" id="user-input" placeholder="TYPE YOUR MESSAGE..." onkeydown="sendMessage(event)">
     </div>
+
+    <br>
+
+    
+<footer>
     <div id="license-info">
+      <br>
+      <div id="links">
+    <h1>Related links</h1>  <h4>
+     <a href="https://consumerright.org.np/"  style="color: #fff;"> Consumer Rights page Nepal</a><br>
+     <a href="https://ciaa.gov.np/" style="color: #fff;"> CIAA Nepal </a><br>
+
+      <a href="https://pokharamun.gov.np/"  style="color: #fff;">Pokhara Metropolitian city</a><br>
+      <a href="https://kathmandu.gov.np/?lang=en" style="color: #fff;"> Kathmandu Metropolitan city </a></h4>
+</div>
         <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
             <a property="dct:title" rel="cc:attributionURL" href="https://github.com/apilbhandarimss/nepali.github.io/" style="color: white;">Chat Bot </a> by
             <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://www.facebook.com/apil.bhandari.969" style="color: white;">Apil Bhandari</a>
             is licensed under
-            <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="color: white; display:inline-block;">Attribution 4.0 International
+            <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="color: white; display:inline-block;">Attribution 4.0 International 
                 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1">
                 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1">
             </a>
-        </p>
+            This may produce wrong information
+        </p></footer>
     </div>
     <script>
-        const responses = {
-            "HOW IS THE WEATHER IN NEPAL?": "The weather in Nepal varies depending on the region and the time of year. It generally has a diverse climate, ranging from tropical in the Terai to alpine in the Himalayas.",
+function addMessage(message, isUser = false) {
+  const chatMessages = document.getElementById('chat-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = isUser ? 'user-message' : 'bot-message';
+  messageDiv.textContent = message;
+  chatMessages.appendChild(messageDiv);
+}
+
+const responses = {
+  "HOW IS THE WEATHER IN NEPAL?": "The weather in Nepal varies depending on the region and the time of year. It generally has a diverse climate, ranging from tropical in the Terai to alpine in the Himalayas.",
             "WHAT IS THE OFFICIAL LANGUAGE OF NEPAL?": "The official language of Nepal is Nepali.",
             "TELL ME ABOUT MOUNT EVEREST.": "Mount Everest is the highest mountain in the world, located in the Himalayas in Nepal. It stands at an elevation of 8,848.86 meters (29,031.7 feet).",
              "TELL ME ABOUT MOUNT EVEREST.": "Mount Everest is the highest mountain in the world, located in the Himalayas in Nepal. It stands at an elevation of 8,848.86 meters (29,031.7 feet).",
@@ -736,7 +770,7 @@
 "WHAT IS THE POPULAR RICE DISH IN NEPAL?" : "DAL BHAT",
 "WHAT IS THE MAIN EXPORT OF NEPAL TO INDIA?" : "ELECTRICITY",
 "WHAT IS THE NATIONAL ELECTION SYMBOL OF RASTRIYA JANAMORCHA?" : "SUN WITH A PLOW",
-"WHAT IS THE HIGHEST TEMPERATURE EVER RECORDED IN NEPAL?" : "44.2°C",
+"WHAT IS THE HIGHEST TEMPERATURE EVER RECORDED IN NEPAL?" : "44.2Â°C",
 "WHAT IS THE NATIONAL ELECTION SYMBOL OF RASTRIYA PRAJATANTRA PARTY?" : "COW",
 "WHICH KING OF NEPAL INTRODUCED THE FIRST TELEPHONE LINE?" : "MAHENDRA LAKSHMI",
 "WHAT IS THE NATIONAL ELECTION SYMBOL OF RASTRIYA JANATA PARTY NEPAL?" : "BULL",
@@ -806,43 +840,144 @@
 "WHAT IS THE AVERAGE ALTITUDE OF MUSTANG?" : "2,780 METERS",
 "WHAT IS THE MAIN EXPORT OF NEPAL TO THE UNITED KINGDOM?" : "CLOTHING",
 "WHAT IS THE NATIONAL ELECTION SYMBOL OF NEPALI CONGRESS PARTY (NAGARI)?" : "TOWER",
+       
+};
+const ignoreWords = ["what", "IS", "THE", "WHO", "NEPAL'S","streets","metropolitan",'mom','i','I','saw','his','ward','no'];
+const spellingMistakes = {
+  'kid': 'child',
+  'scammed': 'scam',
+  'scamed': 'scam',
+  'father': 'elder',
+  'beating':'abuse',
+  'beat':"abuse",
+  //'wrorking': 'labour',
+  'mother': 'elder',
+  'abusing':"abuse",
 
 
+
+
+
+
+};
+function normalizeInput(input) {
+  return input.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').toLowerCase();
+}
+
+function correctSpelling(query) {
+  const words = query.split(' ');
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i].toLowerCase();
+    if (spellingMistakes[word]) {
+      words[i] = spellingMistakes[word];
+    }
+  }
+
+  return words.join(' ');
+}
+
+function calculateSimilarity(str1, str2) {
+  const words1 = str1.split(' ').filter(word => !ignoreWords.includes(word));
+  const words2 = str2.split(' ').filter(word => !ignoreWords.includes(word));
+
+  const commonWords = words1.filter(word => words2.includes(word)).length;
+  const similarityWords = (commonWords / Math.max(words1.length, words2.length)) * 100;
+
+  const sequenceSimilarity = calculateSequenceSimilarity(str1, str2);
+  const lengthDifference = calculateLengthDifference(str1, str2);
+  const firstLetterMatch = calculateFirstLetterMatch(str1, str2);
+  const lastLetterMatch = calculateLastLetterMatch(str1, str2);
+
+  const totalSimilarity = (
+    (similarityWords * 0.45) +          
+    (sequenceSimilarity * 0.39) +     
+    (lengthDifference * 0.01) +        
+    (firstLetterMatch * 0.05) +       
+    (lastLetterMatch * 0.10)          
+  );
+
+  return totalSimilarity;
+}
+
+function calculateSequenceSimilarity(str1, str2) {
+  const maxLength = Math.max(str1.length, str2.length);
+  let sequenceSimilarity = 0;
+
+  for (let i = 0; i < maxLength; i++) {
+    if (str1[i] === str2[i]) {
+      sequenceSimilarity += 1 / maxLength; // Increment based on matching letters in sequence
+    }
+  }
+
+  return sequenceSimilarity * 100; // Convert to percentage
+}
+
+function calculateLengthDifference(str1, str2) {
+  const lengthDiff = Math.abs(str1.length - str2.length);
+  return 100 - (lengthDiff * 3); // Higher similarity for smaller differences in length
+}
+
+function calculateFirstLetterMatch(str1, str2) {
+  return (str1.charAt(0) === str2.charAt(0)) ? 100 : 0; // Full match of first letter gives 100 similarity
+}
+
+function calculateLastLetterMatch(str1, str2) {
+  return (str1.charAt(str1.length - 1) === str2.charAt(str2.length - 1)) ? 100 : 0; // Full match of last letter gives 100 similarity
+}
+
+function search(query) {
+  let similarQueries = [];
+
+  const correctedUserMessage = correctSpelling(query);
+  const userMessage = normalizeInput(correctedUserMessage.trim().toUpperCase());
+
+  for (const predefinedQuery in responses) {
+    const similarity = calculateSimilarity(userMessage, normalizeInput(predefinedQuery.toUpperCase()));
+    similarQueries.push({ query: predefinedQuery, similarity: similarity });
+  }
+
+  similarQueries.sort((a, b) => b.similarity - a.similarity); // Sort by similarity, descending
+
+  const topSimilarQueries = similarQueries.slice(0, 2); // Retrieve top 3 similar queries
+
+  return topSimilarQueries;
+}
+
+function sendMessage(event) {
+  if (event.key === 'Enter') {
+    const userInput = document.getElementById('user-input');
+    const userMessage = userInput.value.trim();
+    userInput.value = '';
+
+    const topSimilarQueries = search(userMessage);
+
+    addMessage(`User query: ${userMessage.toUpperCase()}`, true);
+    addMessage(`Thease are top 2 results`);
+
+
+    setTimeout(() => {
+      topSimilarQueries.forEach((similarQuery) => {
+        addMessage(`Query: ${similarQuery.query} - Response: ${responses[similarQuery.query]}`);
+        
+
+      });
+    }, 500);
+  }
+
+} function addMessage(message, isUser = false) {
+  const chatMessages = document.getElementById('chat-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = isUser ? 'user-message' : 'bot-message';
+  messageDiv.textContent = message;
+  chatMessages.appendChild(messageDiv);
+
+  // Scroll to the bottom of the chat container
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
   
-        };
 
-        function getRandomResponse() {
-            const questionArray = Object.keys(responses);
-            const randomQuestion = questionArray[Math.floor(Math.random() * questionArray.length)];
-            return responses[randomQuestion];
-        }
 
-        function addMessage(message, isUser = false) {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = isUser ? 'user-message' : 'bot-message';
-            messageDiv.textContent = message;
-            chatMessages.appendChild(messageDiv);
-        }
-
-        function sendMessage(event) {
-            if (event.key === 'Enter') {
-                const userInput = document.getElementById('user-input');
-                const userMessage = userInput.value.toUpperCase(); // Convert user input to uppercase
-                userInput.value = '';
-
-                addMessage(userMessage, true);
-
-                if (responses[userMessage]) {
-                    const botResponse = responses[userMessage];
-                    setTimeout(() => {
-                        addMessage(botResponse);
-                    }, 500);
-                } else {
-                    addMessage("I'M NOT SURE HOW TO ANSWER THAT QUESTION.");
-                }
-            }
-        }
     </script>
 
     <style>
@@ -855,20 +990,21 @@ body {
     padding: 0;
 }
 
+
 body {
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
     height: 100vh; /* Make the body take full viewport height */
     margin: 0;
-    background-image: url('bg.jpg');
+    background-image: url('hi.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     font-family: Arial, sans-serif;
 }
 
 #chat-container {
-    max-width: 400px;
+    max-width: 50;
     padding: 30px;
     background-color: rgba(0, 0, 0, 0.4);
     border-radius: 10px;
@@ -876,36 +1012,62 @@ body {
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
     position: relative;
     z-index: 2;
+    max-height: 50px
+       
 }
 
 #chat-container:hover {
     background-color: rgba(0, 0, 0, 0.6); /* Darken the background on hover */
     transform: scale(1.02); /* Slight scaling effect on hover */
 }
+nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      text-align: center;
+      font-size: 8px;
+    }
 
-#header {
-    text-align: center;
-    font-size: 16px;
+    nav ul li {
+      display: inline;
+      margin-right: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    nav ul li a:hover {
+      color: #ffcc00;
+    }
+
+
+    #header {
+    text-align: top;
+    font-size: 4px;
     color: #fff;
     position: absolute;
-    top: 10px;
+    top: 5px; /* Adjust to give space from the top */
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8); /* Slightly more opaque black background */
+    background-color: rgba(0, 0, 0, 0.8);
     padding: 10px 20px;
     border-radius: 20px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-    z-index: 3; /* Ensure it's above chat messages */
+    z-index: 3;
+    width: 96.5%;
+    height: auto;
 }
 
-#header:hover {
-    background-color: rgba(0, 0, 0, 0.9); /* Darken the background on hover */
-    transform: translateX(-50%) scale(1.05); /* Slight scaling effect on hover */
-}
 
 #chat-messages {
-    max-height: 150px;
+    max-height: 200px;
+    max-width: 500px;
     overflow-y: scroll;
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
@@ -915,6 +1077,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     transition: background-color 0.3s ease-in-out;
+    scroll-behavior: auto;
 }
 
 #chat-messages:hover {
@@ -969,37 +1132,23 @@ input[type="text"]:hover {
     background-color: rgba(255, 255, 255, 1);
 }
 
-#send-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 12px 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
 
-#send-button:hover {
-    background-color: #0056b3;
-}
-
-#send-button:focus {
-    outline: none;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-}
 #license-info {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 98.35%;
     background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
     padding: 10px;
     text-align: center;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
     color: white;
+    height: auto;
 }
-
-    </style>
+#links {
+  text-align: justify;
+  font-size: 10px;
+}
+</style>
 </body>
 </html>
